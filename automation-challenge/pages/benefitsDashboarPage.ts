@@ -1,5 +1,18 @@
 import { Locator, Page } from '@playwright/test';
 
+export type Employee = {
+    id: string,
+    lastName: string,
+    firstName: string,
+    dependents: string,
+    salary: string,
+    grossPay: string,
+    benefitsCost: string,
+    netPay: string,
+    update: Locator,
+    delete: Locator
+}
+
 export class BenefitsDashboardPage {
     private readonly page: Page;
     private readonly ADD_BUTTON: Locator;
@@ -10,6 +23,7 @@ export class BenefitsDashboardPage {
     private readonly MODAL_CANCEL_BTN: Locator;
     private readonly EMPLOYEES_TABLE: Locator;
     private readonly EMPLOYEE_MODAL: Locator;
+    private readonly EMPLOYEE_ROWS: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -22,6 +36,7 @@ export class BenefitsDashboardPage {
         this.MODAL_CANCEL_BTN = this.page.locator(`button[class*=btn-secondary]`);
         this.EMPLOYEES_TABLE = this.page.locator(`#employeesTable`);
         this.EMPLOYEE_MODAL = this.page.locator(`#employeeModal`);
+        this.EMPLOYEE_ROWS = this.page.locator(`table[id='employeesTable'] tbody tr`);
     }
 
     async clickDashboardAddBtn(): Promise<void> {
@@ -59,6 +74,31 @@ export class BenefitsDashboardPage {
         await this.enterDependents(dependents);
         await this.clickModalAddBtn();
         await this.page.waitForTimeout(10000);
+    }
+
+    async getEmployeeRows(): Promise<number> {
+        const rows = await this.EMPLOYEE_ROWS.count() ? await this.EMPLOYEE_ROWS.count() : 0;
+        return rows;
+    }
+
+    async getEmployeesList(): Promise<Employee[]> {
+        const employeeList: Employee[] = [];
+        for (const employee of await this.EMPLOYEE_ROWS.all()) {
+            const emp: Employee = {
+                id: await employee.locator(`td:nth-child(1)`).innerText(),
+                lastName: await employee.locator(`td:nth-child(2)`).innerText(),
+                firstName: await employee.locator(`td:nth-child(3)`).innerText(),
+                dependents: await employee.locator(`td:nth-child(4)`).innerText(),
+                salary: await employee.locator(`td:nth-child(5)`).innerText(),
+                grossPay: await employee.locator(`td:nth-child(6)`).innerText(),
+                benefitsCost: await employee.locator(`td:nth-child(7)`).innerText(),
+                netPay: await employee.locator(`td:nth-child(8)`).innerText(),
+                update: employee.locator(`td:nth-child(9) i[class*='fa-edit']`),
+                delete: employee.locator(`td:nth-child(9) i[class*='fa-times']`)
+            }
+            employeeList.push(emp);
+        }
+        return employeeList;
     }
 
 }
