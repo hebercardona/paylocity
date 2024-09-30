@@ -1,1 +1,57 @@
 STE Assessment- Bug Challenge
+
+Defects Found
+
+API
+
+Summary: Employee record can be updated after deleting employee from the backend(API).
+
+Steps to repro:
+1. Go to Benefits dashboard and add a new employee
+2. Make a Delete api call passing the employee id that was recently created
+3. Go to the benefits dashboard and click Edit on the employee that was recently created and deleted from the api delete call
+4. Update any field and click Update button
+5. Refresh browser
+
+Actual: Employee record persist and shows the updated values
+Expected: A client side validation error should be thrown indicating the user that something went wrong
+
+
+Summary: Unexisting employee can be updated via api update employee call 
+
+Steps to repro:
+1. Go to Update Employee api
+2. Go to the body tab
+3. Pass an ID that does not exist on the employee list but with correct ID format
+4. Give any valid value for the rest of the fields: firstName/lastName/dependants
+5. Send api request
+6. Go to the benefist dashboard and Refresh
+
+Actual: New employee is shown on the front ent and it shows 0.00 Salary and Gross Pay and negative Net Pay
+Expected: An API error should be thrown that the ID passed does not exist
+
+
+
+UI 
+
+Summary: Client side validation errors missing
+
+Steps to repro:
+1. Go to Benefits dashboard and add a new employee
+2. Leave blank all input fields
+3. Click Add button
+
+Actual: No validation error is shown on the form to inform the user something is missing
+Expected: Client side validation error should be shown
+
+
+Summary: Special characters saved on Add and Edit user
+
+Steps to repro:
+1. Go to Benefits dashboard and add a new employee
+2. Enter any special characters on the first name and last name input fields
+3. Enter an integer on the dependant field
+4. Click Add button
+
+Actual: Employee is saved with special characters. Same is happening with the Update form.
+Expected: Should there be a validation running to avoid the user entering special characters?
