@@ -24,6 +24,8 @@ export class BenefitsDashboardPage {
     private readonly EMPLOYEES_TABLE: Locator;
     private readonly EMPLOYEE_MODAL: Locator;
     private readonly EMPLOYEE_ROWS: Locator;
+    private readonly CONFIRM_DELETE_BTN: Locator;
+    private readonly DELETE_MODAL: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -37,6 +39,8 @@ export class BenefitsDashboardPage {
         this.EMPLOYEES_TABLE = this.page.locator(`#employeesTable`);
         this.EMPLOYEE_MODAL = this.page.locator(`#employeeModal`);
         this.EMPLOYEE_ROWS = this.page.locator(`table[id='employeesTable'] tbody tr`);
+        this.CONFIRM_DELETE_BTN = this.page.locator(`#deleteEmployee`);
+        this.DELETE_MODAL = this.page.locator(`#deleteModal`);
     }
 
     async clickDashboardAddBtn(): Promise<void> {
@@ -77,8 +81,12 @@ export class BenefitsDashboardPage {
     }
 
     async getEmployeeRows(): Promise<number> {
-        const rows = await this.EMPLOYEE_ROWS.count() ? await this.EMPLOYEE_ROWS.count() : 0;
-        return rows;
+        await this.EMPLOYEES_TABLE.waitFor({state: 'visible'});
+        if(await this.EMPLOYEE_ROWS.count() === 1 && (await this.EMPLOYEE_ROWS.first().locator('td').first().innerText()).includes('No employees found')) {
+            return 0;
+        } else {
+            return await this.EMPLOYEE_ROWS.count() ? await this.EMPLOYEE_ROWS.count() : 0;
+        }
     }
 
     async getEmployeesList(): Promise<Employee[]> {
@@ -99,6 +107,29 @@ export class BenefitsDashboardPage {
             employeeList.push(emp);
         }
         return employeeList;
+    }
+
+    async getEmployeeByDetails(firstName: string, lastName: string, dependents: string): Promise<Employee | undefined> {
+        const employees = await this.getEmployeesList();
+        for (const employee of employees) {
+            if(employee.firstName === firstName && employee.lastName === lastName && employee.dependents === dependents)
+                return employee;
+        }
+        return undefined;
+    }
+
+    async clickConfirmDeleteBtn(): Promise<void> {
+        await this.DELETE_MODAL.waitFor({state: 'visible'});
+        await this.CONFIRM_DELETE_BTN.click();
+        await this.DELETE_MODAL.waitFor({state: 'hidden'});
+    }
+
+    async deleteAllEmployees(): Promise<void> {
+        const employees = await this.getEmployeesList();
+        for (const employee of employees) {
+            employee.delete.click();
+            await this.clickConfirmDeleteBtn();
+        }
     }
 
 }
