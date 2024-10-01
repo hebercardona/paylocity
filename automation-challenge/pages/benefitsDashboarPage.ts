@@ -26,6 +26,7 @@ export class BenefitsDashboardPage {
     private readonly EMPLOYEE_ROWS: Locator;
     private readonly CONFIRM_DELETE_BTN: Locator;
     private readonly DELETE_MODAL: Locator;
+    private readonly EMPLOYEE_DELETE: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -41,9 +42,11 @@ export class BenefitsDashboardPage {
         this.EMPLOYEE_ROWS = this.page.locator(`table[id='employeesTable'] tbody tr`);
         this.CONFIRM_DELETE_BTN = this.page.locator(`#deleteEmployee`);
         this.DELETE_MODAL = this.page.locator(`#deleteModal`);
+        this.EMPLOYEE_DELETE = this.page.locator(`i[class*='fa-times']`);
     }
 
     async clickDashboardAddBtn(): Promise<void> {
+        await this.page.waitForTimeout(2000);
         await this.EMPLOYEES_TABLE.waitFor({state: 'visible'});
         await this.ADD_BUTTON.waitFor({state: 'visible'});
         await this.ADD_BUTTON.click();
@@ -125,10 +128,10 @@ export class BenefitsDashboardPage {
     }
 
     async deleteAllEmployees(): Promise<void> {
-        const employees = await this.getEmployeesList();
-        for (const employee of employees) {
-            employee.delete.click();
+        for (const employee of await this.EMPLOYEE_DELETE.all()) {
+            await this.EMPLOYEE_DELETE.first().click();
             await this.clickConfirmDeleteBtn();
+            await this.page.waitForTimeout(1000);
         }
     }
 
