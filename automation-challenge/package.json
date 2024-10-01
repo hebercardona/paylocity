@@ -6,7 +6,8 @@
   "scripts": {
     "api-test": "npx playwright test -g '@apiTest'",
     "ui-test": "npx playwright test -g '@uiTest'",
-    "dev": "npm install && npx playwright install" 
+    "dev": "npm install && npx playwright install",
+    "test": "npx playwright test"
   },
   "keywords": [],
   "author": "",
