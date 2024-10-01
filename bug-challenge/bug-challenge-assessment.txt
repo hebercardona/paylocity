@@ -32,7 +32,17 @@ Expected: An API error should be thrown that the ID passed does not exist
 
 
 
-UI 
+UI
+
+Summary: First Name and Last name are saved into the wrong field
+
+Steps to repro:
+1. Go to benefits dashboard and click Add Employee button
+2. Enter first name, last name and dependents
+3. Click Add button
+
+Actual: Last Name column displays first name entered and last name displays first named entered on the form
+Expected: Last name and first name should display the correct values entered on the form
 
 Summary: Client side validation errors missing
 
