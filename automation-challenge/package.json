@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "api-test": "npx playwright test -g '@apiTest'",
-    "ui-test": "npx playwright test -g '@uiTest'",
+    "api": "npx playwright test apiTests",
+    "ui": "npx playwright test uiTests --headed",
     "dev": "npm install && npx playwright install",
     "test": "npx playwright test"
   },
